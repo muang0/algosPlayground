@@ -1,0 +1,80 @@
+# couchdb single node setup: https://docs.couchdb.org/en/master/setup/single-node.html
+# curl -u admin:password -X PUT http://127.0.0.1:5984/_users
+---
+apiVersion: v1
+kind: Namespace 
+metadata:
+  name: db
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dbvolumeclaim
+  namespace: db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 126Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbservice
+  namespace: db
+spec:
+  ports:
+    - port: 5984
+      targetPort: 5984
+  selector:
+    app: db
+---
+# outside of example purposes, secrets would be stored in secret management software
+# and retrieved/set in a secure manner as part of a deployment pipeline
+apiVersion: v1
+kind: Secret
+data:
+  password: password
+metadata:
+  name: dbsecrets
+  namespace: db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: couchdb
+  namespace: db
+spec:
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      name: couchdb
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: couchdb
+          image: couchdb:latest
+          env:
+            - name: COUCHDB_USER
+              value: admin
+            - name: COUCHDB_PASSWORD
+              value: password
+            - name: examplepassword
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: dbsecrets
+          ports:
+          - name: couchdb
+            containerPort: 5984
+          volumeMounts:
+            - name: dbvolume
+              mountPath: /mnt/data
+      volumes:
+        - name: dbvolume
+          persistentVolumeClaim:
+            claimName: dbvolumeclaim
