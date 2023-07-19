@@ -1,34 +1,38 @@
-// TODO: clean up unwrap()
+use orange_trees::{Tree, Node};
 
 fn main() {
-    println!("Hello, world!");
+    println!("Hello, darling!");
 }
 
-struct Node<'a> {
-    value: Option<char>,
-    nodes: Option<Vec<&'a Node<'a>>>
-}
+fn generate_word_tree(wordlist: Vec<&str>) -> Option<Tree<&str, char>> { // , Vec<Node<&str, char>>
+    let mut tree: Tree<&str, char> = Tree::new(Node::new("root", ' '));
+    let mut current_node = tree.root_mut();
+    // let mut nodes: Vec<Node<&str, char>> = vec![];
 
-fn generate_word_tree(wordlist: Vec<&str>) -> Option<Node<'static>> {
-    let mut global_root: Node = Node{value: None, nodes: Some(vec![])};
-    let mut current_node = &mut global_root;
     for word in wordlist {
         for char in word.chars() {
-            'a: for mut node in current_node.nodes.as_mut().unwrap() {
-                if char == node.value.unwrap() {
-                    current_node = node;
-                    break 'a
+            let mut char_exists = false;
+            let mut matched_child_node_index = 0;
+            for (index, node) in current_node.iter().enumerate() {
+                if char == *node.value() {
+                    char_exists = true;
+                    matched_child_node_index = index;
+                    break
                 }
             }
-            // Do we need to block this with a condition check set in lines 19-20
-            // insert node with char, make that one current_node
-            let mut new_node = Node{value: Some(char), nodes: Some(vec![])};
-            current_node.nodes.unwrap().append(&mut vec![&new_node]);
-            // current node = newly-created child node
-            let current_node = &mut new_node;
+            if char_exists {
+                current_node = current_node.iter_mut().nth(matched_child_node_index).unwrap();
+            } else {
+                let new_node = Node::new("asdf", char);
+                current_node.add_child(new_node);
+                // nodes.append(&mut vec![new_node]);
+                let nth = current_node.iter().len()-1;
+                current_node = current_node.iter_mut().nth(nth).unwrap(); // TODO
+            }
         }
+        current_node = tree.root_mut();
     }
-    return Some(global_root)
+    return Some(tree)
 }
 
 #[cfg(test)]
@@ -41,17 +45,9 @@ mod tests {
         let wordlist = vec!["fred", "freya", "fret"];
 
         // wordtree
-        let n3_3 = Node{value: Some('t'), nodes: None};
-        let n2_4: Node<'_> = Node{value: Some('a'), nodes: None};
-        let n2_3: Node<'_> = Node{value: Some('y'), nodes: Some(vec![&n2_4])};
-        let n1_3: Node<'_> = Node{value: Some('d'), nodes: None};
-        let n0_2: Node<'_> = Node{value: Some('e'), nodes: Some(vec![&n1_3, &n2_3, &n3_3])};
-        let n0_1: Node<'_> = Node{value: Some('r'), nodes: Some(vec![&n0_2]) };
-        let n0_0: Node<'_> = Node{value: Some('f'), nodes: Some(vec![&n0_1]) };
-        let wordtree = Node{value: None, nodes: Some(vec![&n0_0]) };
 
         // compose & validate the generated word tree
-        let Some(word_tree) = generate_word_tree(wordlist);
-
+        let test = generate_word_tree(wordlist.clone());
+        let test = generate_word_tree(wordlist);
     }
 }
