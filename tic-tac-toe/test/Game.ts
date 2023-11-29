@@ -7,6 +7,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 describe("TicTacToe", function() {
+  // provides an instance of the ticTacToe contract
   async function deployGame() {
     const ONE_GWEI = 1_000_000_000;
     const lockedAmount = ONE_GWEI;
@@ -17,6 +18,7 @@ describe("TicTacToe", function() {
   }
 
   describe("Deployment", function() {
+    // test that the contract can be deployed, and the first move is taken correctly
     it("Should deploy", async function() {
       const game = await loadFixture(deployGame);
       var test = await game.game.x(0,0);
@@ -26,6 +28,7 @@ describe("TicTacToe", function() {
   })
 
   describe("Game", function() {
+    // test the win scenario
     it("Win", async function() {
       const ONE_GWEI = 1_000_000_000;
       const lockedAmount = ONE_GWEI;
@@ -47,13 +50,16 @@ describe("TicTacToe", function() {
       balance_before_withdraw = await ethers.provider.getBalance(game.x_account.address);
       game.game.withdrawFunds();
       balance_after_withdraw = await ethers.provider.getBalance(game.x_account.address);
+      // TODO: fix the following test case to correctly calculate balance after withdraw (accounting for tx fees)
       expect(balance_before_withdraw).to.equal(balance_after_withdraw);
     })
 
+    // TODO
     describe("Tie", function() {
 
     })
 
+    // TODO
     describe("Stall", function() {
 
     })

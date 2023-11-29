@@ -16,7 +16,11 @@ contract TicTacToe {
     uint public bet;
     uint public move_timer;
 
+    // this function sets up the game by locking in two player addresses, and placing a first move
     constructor(uint _y, uint _x, address payable _o_addr) payable {
+        // _y: y axis coordinate of the first move
+        // _x: x axis coordinate of the first move
+        // _o_addr: address being challenged
         if (_y > 2 || _x > 2) {
             revert("Must provide a move within the board bounds!");
         }
@@ -37,6 +41,7 @@ contract TicTacToe {
         current_player = _o_addr;
     }
 
+    // this function is called by the challenged address to match the bet put up by the initializing address
     function match_bet() public payable {
         if (msg.value < bet) {
             revert("The matched bet value must match the initial bet!");
@@ -44,6 +49,7 @@ contract TicTacToe {
         bet_matched = true;
     }
 
+    // addresses call this function to take turns
     function takeTurn(uint _y, uint _x) external {
         // if address matches current-player, take their turn & evaluate if win scenario achieved
         if (msg.sender != current_player) {
@@ -79,6 +85,7 @@ contract TicTacToe {
             game_won = true;
             winner = o_addr;
         }
+        // TODO: evaluate board for remaining win scenarios
         // alternate current-player
         if (current_player == x_addr) {
             current_player = o_addr;
@@ -99,6 +106,7 @@ contract TicTacToe {
         }
     }
 
+    // this function is called to withdraw funds in the win, tie, or stall scenarios 
     function withdrawFunds() external {
         // If player takes too long to play, allow other player to withdraw funds
         if (!game_won && block.timestamp > move_timer) {
