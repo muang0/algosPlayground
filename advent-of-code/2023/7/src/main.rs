@@ -28,6 +28,26 @@ impl Hand {
                 hand_map.insert(c, 1);
             }
         }
+        // Jacks should act as the type of card the user has the most of
+        let mut num_jacks = 0;
+        if let Some(nj) = hand_map.get(&'J') {
+            if *nj != 5 {
+                num_jacks = *nj;
+            }
+        }
+        if num_jacks > 0 && num_jacks < 5 {
+            hand_map.remove(&'J');
+            let mut most_held_card = ' ';
+            let mut num_most_held_cards = 0;
+            for (card, num_cards) in hand_map.iter() {
+                if *num_cards > num_most_held_cards {
+                    most_held_card = *card;
+                    num_most_held_cards = *num_cards;
+                }
+            }
+            hand_map.insert(most_held_card, num_most_held_cards + num_jacks);
+        }
+
         // five of a kind
         if hand_map.keys().count() == 1 {
             return Hand{cards: hand_str.to_string(), hand_type: HandType::FiveOfAKind, bid};
@@ -109,8 +129,8 @@ impl Ord for Hand {
                 if c == 'Q' { return Ordering::Greater }
                 if other_c == 'Q' { return Ordering::Less }
 
-                if c == 'J' { return Ordering::Greater }
-                if other_c == 'J' { return Ordering::Less }
+                if c == 'J' { return Ordering::Less }
+                if other_c == 'J' { return Ordering::Greater }
 
                 if c == 'T' { return Ordering::Greater }
                 if other_c == 'T' { return Ordering::Less }
@@ -178,8 +198,8 @@ impl PartialOrd for Hand {
                 if c == 'Q' { return Some(Ordering::Greater) }
                 if other_c == 'Q' { return Some(Ordering::Less) }
 
-                if c == 'J' { return Some(Ordering::Greater) }
-                if other_c == 'J' { return Some(Ordering::Less) }
+                if c == 'J' { return Some(Ordering::Less) }
+                if other_c == 'J' { return Some(Ordering::Greater) }
 
                 if c == 'T' { return Some(Ordering::Greater) }
                 if other_c == 'T' { return Some(Ordering::Less) }
