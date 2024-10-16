@@ -1,0 +1,39 @@
+---
+cards:
+  - type: tree
+    tree:
+      name: string  # "sycamore", "birch", "beech", "douglasFir", "oak", "horseChesnut", "linden", "silverFir"
+      cost: number
+      symbol: string  # "sycamore", "birch", "beech", "douglasFir", "oak", "horseChesnut", "linden", "silverFir"
+      baseValue: any
+      effects:
+        bonus:
+          description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
+        base:
+          description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
+  - type: animal
+    animal:
+      split: string # "vertical" or "horizontal"
+      animals:
+        - name: string
+          cost: number
+          type: string  # "amphibian", "bat", "deer", "insect", "clovenHoofed", "plant", "pawed", "mushroom", "butterfly", "bird"
+          symbol: string  # "sycamore", "birch", "beech", "douglasFir", "oak", "horseChesnut", "linden", "silverFir"
+          location: string  # "top", "bottom", "left", or "right"
+          baseValue: any
+          effects:
+            bonus:
+              description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
+            base:
+              description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
+        - name: string
+          cost: number
+          type: string  # "amphibian", "bat", "deer", "insect", "clovenHoofed", "plant", "pawed", "mushroom", "butterfly", "bird"
+          symbol: string  # "sycamore", "birch", "beech", "douglasFir", "oak", "horseChesnut", "linden", "silverFir"
+          location: string  # "top", "bottom", "left", or "right"
+          baseValue: any
+          effects:
+            bonus:
+              description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
+            base:
+              description: string # "turn", "playType", "playUnlimitedType", "drawPerType", "drawPerAnimal", "draw"
